@@ -1,0 +1,9 @@
+Package: tombRaiderWrapper
+Title: R Wrapper for tombRaider
+Version: 0.1.0
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: R package to wrap around the tombRaider Python library for identifying artefacts in metabarcoding data.
+License: MIT + file LICENSE
+Imports:
+    reticulate
+RoxygenNote: 7.3.2
