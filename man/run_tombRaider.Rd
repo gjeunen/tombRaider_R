@@ -2,13 +2,93 @@
 % Please edit documentation in R/tombRaiderWrapper.R
 \name{run_tombRaider}
 \alias{run_tombRaider}
-\title{Run tombRaider with specified arguments}
+\title{Run tombRaider with custom parameters}
 \usage{
-run_tombRaider(args)
+run_tombRaider(
+  criteria = NULL,
+  discard_artefacts = NULL,
+  frequency_input = NULL,
+  sequence_input = NULL,
+  taxonomy_input = NULL,
+  alignment_input = NULL,
+  frequency_output = NULL,
+  sequence_output = NULL,
+  taxonomy_output = NULL,
+  log = NULL,
+  transpose = NULL,
+  omit_rows = NULL,
+  omit_columns = NULL,
+  occurrence_type = NULL,
+  occurrence_ratio = NULL,
+  detection_threshold = NULL,
+  exclude = NULL,
+  sort = NULL,
+  similarity = NULL,
+  pairwise_alignment = NULL,
+  blast_format = NULL,
+  bold_format = NULL,
+  sintax_threshold = NULL,
+  taxon_quality = NULL,
+  use_accession_id = NULL,
+  orf = NULL,
+  calculate_pairwise = NULL
+)
 }
 \arguments{
-\item{args}{Command line arguments for tombRaider}
+\item{criteria}{A string separated by ';' of included criteria to identify parent-child combos: 'taxID', 'seqSim', 'coOccur', 'pseudogene'}
+
+\item{discard_artefacts}{Logical, whether to discard rather than merge artefacts with parent sequences}
+
+\item{frequency_input}{Frequency table input file name}
+
+\item{sequence_input}{Sequence input file name}
+
+\item{taxonomy_input}{Taxonomy input file name}
+
+\item{alignment_input}{Alignment input file name}
+
+\item{frequency_output}{Frequency table output file name}
+
+\item{sequence_output}{Sequence output file name}
+
+\item{taxonomy_output}{Taxonomy output file name}
+
+\item{log}{Log output file name}
+
+\item{transpose}{Logical, transpose 'frequency-input' to set taxa as rows}
+
+\item{omit_rows}{A list of row labels to drop from the frequency table}
+
+\item{omit_columns}{A list of column labels to drop from the frequency table}
+
+\item{occurrence_type}{Data structure type to assess co-occurrence pattern: 'presence-absence' or 'abundance'}
+
+\item{occurrence_ratio}{Ratio type and value for co-occurrence pattern to hold true: 'global;1.0', 'local;1.0', or 'count;1'}
+
+\item{detection_threshold}{Detection threshold to consider true detection (default: 0)}
+
+\item{exclude}{List of samples to exclude from the analysis}
+
+\item{sort}{OTU/ASV sorting method: 'total read count', 'average read count', 'detections'}
+
+\item{similarity}{Sequence similarity threshold between child and parent}
+
+\item{pairwise_alignment}{'global' (default) or 'local' alignment algorithm}
+
+\item{blast_format}{Format of 'blast-input' file as provided to parameter 'outfmt' in blastn}
+
+\item{bold_format}{'bold-input' file format: 'summary', 'complete'}
+
+\item{sintax_threshold}{Set sintax id and similarity to threshold column}
+
+\item{taxon_quality}{Requires taxonomic assignment score of parent >= child}
+
+\item{use_accession_id}{Set accession number as taxonomic ID (for intraspecific variation)}
+
+\item{orf}{Start position of the open reading frame}
+
+\item{calculate_pairwise}{Exclude 'alignment-input' for sequence similarity}
 }
 \description{
-Run tombRaider with specified arguments
+Run tombRaider with custom parameters
 }

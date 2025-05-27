@@ -31,53 +31,124 @@ setup_tombRaider <- function() {
   Sys.setenv(PATH = paste(Sys.getenv("PATH"), file.path(getwd(), file.path("tombRaider", "tombRaider")), sep = ":"))
 }
 
-#' Run tombRaider with specified arguments
-#' @param args Command line arguments for tombRaider
-#' @export
-run_tombRaider <- function(args) {
-  setup_python_env()
-  setup_tombRaider()
-
-  # Get the path to the Python interpreter in the virtual environment
-  python_bin <- virtualenv_python("r-reticulate")
-
-  # Run the tombRaider command using the virtual environment's Python
-  command <- paste(shQuote(python_bin), file.path("tombRaider", "tombRaider"), args)
-  system(command)
-}
-
 #' Run tombRaider with example files
 #' @export
 tombRaider_example_run <- function() {
-  run_tombRaider("--example-run")
+  setup_python_env()
+  setup_tombRaider()
+  python_bin <- virtualenv_python("r-reticulate")
+  command <- paste(shQuote(python_bin), file.path("tombRaider", "tombRaider"), "--example-run")
+  system(command)
 }
 
 #' Run tombRaider with custom parameters
-#' @param method Method to use
-#' @param frequency_input Path to frequency input file
-#' @param sequence_input Path to sequence input file
-#' @param blast_input Path to BLAST input file
-#' @param frequency_output Path to frequency output file
-#' @param sequence_output Path to sequence output file
-#' @param blast_output Path to BLAST output file
-#' @param condensed_log Path to condensed log file
-#' @param detailed_log Path to detailed log file
-#' @param count Count parameter
-#' @param sort Sort parameter
+#' @param criteria A string separated by ';' of included criteria to identify parent-child combos: 'taxID', 'seqSim', 'coOccur', 'pseudogene'
+#' @param discard_artefacts Logical, whether to discard rather than merge artefacts with parent sequences
+#' @param frequency_input Frequency table input file name
+#' @param sequence_input Sequence input file name
+#' @param taxonomy_input Taxonomy input file name
+#' @param alignment_input Alignment input file name
+#' @param frequency_output Frequency table output file name
+#' @param sequence_output Sequence output file name
+#' @param taxonomy_output Taxonomy output file name
+#' @param log Log output file name
+#' @param transpose Logical, transpose 'frequency-input' to set taxa as rows
+#' @param omit_rows A list of row labels to drop from the frequency table
+#' @param omit_columns A list of column labels to drop from the frequency table
+#' @param occurrence_type Data structure type to assess co-occurrence pattern: 'presence-absence' or 'abundance'
+#' @param occurrence_ratio Ratio type and value for co-occurrence pattern to hold true: 'global;1.0', 'local;1.0', or 'count;1'
+#' @param detection_threshold Detection threshold to consider true detection (default: 0)
+#' @param exclude List of samples to exclude from the analysis
+#' @param sort OTU/ASV sorting method: 'total read count', 'average read count', 'detections'
+#' @param similarity Sequence similarity threshold between child and parent
+#' @param pairwise_alignment 'global' (default) or 'local' alignment algorithm
+#' @param blast_format Format of 'blast-input' file as provided to parameter 'outfmt' in blastn
+#' @param bold_format 'bold-input' file format: 'summary', 'complete'
+#' @param sintax_threshold Set sintax id and similarity to threshold column
+#' @param taxon_quality Requires taxonomic assignment score of parent >= child
+#' @param use_accession_id Set accession number as taxonomic ID (for intraspecific variation)
+#' @param orf Start position of the open reading frame
+#' @param calculate_pairwise Exclude 'alignment-input' for sequence similarity
 #' @export
-run_tombRaider_custom <- function(method, frequency_input, sequence_input, blast_input, frequency_output, sequence_output, blast_output, condensed_log, detailed_log, count, sort) {
-  args <- paste(
-    "--method", method,
-    "--frequency-input", frequency_input,
-    "--sequence-input", sequence_input,
-    "--blast-input", blast_input,
-    "--frequency-output", frequency_output,
-    "--sequence-output", sequence_output,
-    "--blast-output", blast_output,
-    "--condensed-log", condensed_log,
-    "--detailed-log", detailed_log,
-    "--count", count,
-    "--sort", sort
-  )
-  run_tombRaider(args)
+run_tombRaider <- function(
+  criteria = NULL,
+  discard_artefacts = NULL,
+  frequency_input = NULL,
+  sequence_input = NULL,
+  taxonomy_input = NULL,
+  alignment_input = NULL,
+  frequency_output = NULL,
+  sequence_output = NULL,
+  taxonomy_output = NULL,
+  log = NULL,
+  transpose = NULL,
+  omit_rows = NULL,
+  omit_columns = NULL,
+  occurrence_type = NULL,
+  occurrence_ratio = NULL,
+  detection_threshold = NULL,
+  exclude = NULL,
+  sort = NULL,
+  similarity = NULL,
+  pairwise_alignment = NULL,
+  blast_format = NULL,
+  bold_format = NULL,
+  sintax_threshold = NULL,
+  taxon_quality = NULL,
+  use_accession_id = NULL,
+  orf = NULL,
+  calculate_pairwise = NULL
+) {
+  setup_python_env()
+  setup_tombRaider()
+  
+  # Get the path to the Python interpreter in the virtual environment
+  python_bin <- virtualenv_python("r-reticulate")
+  
+  # Build the command line arguments
+  args <- character()
+  
+  # Helper function to add arguments
+  add_arg <- function(name, value) {
+    if (!is.null(value)) {
+      if (is.logical(value)) {
+        if (value) args <<- c(args, paste0("--", gsub("_", "-", name)))
+      } else {
+        args <<- c(args, paste0("--", gsub("_", "-", name)), shQuote(as.character(value)))
+      }
+    }
+  }
+  
+  # Add all arguments
+  add_arg("criteria", criteria)
+  add_arg("discard-artefacts", discard_artefacts)
+  add_arg("frequency-input", frequency_input)
+  add_arg("sequence-input", sequence_input)
+  add_arg("taxonomy-input", taxonomy_input)
+  add_arg("alignment-input", alignment_input)
+  add_arg("frequency-output", frequency_output)
+  add_arg("sequence-output", sequence_output)
+  add_arg("taxonomy-output", taxonomy_output)
+  add_arg("log", log)
+  add_arg("transpose", transpose)
+  add_arg("omit-rows", omit_rows)
+  add_arg("omit-columns", omit_columns)
+  add_arg("occurrence-type", occurrence_type)
+  add_arg("occurrence-ratio", occurrence_ratio)
+  add_arg("detection-threshold", detection_threshold)
+  add_arg("exclude", exclude)
+  add_arg("sort", sort)
+  add_arg("similarity", similarity)
+  add_arg("pairwise-alignment", pairwise_alignment)
+  add_arg("blast-format", blast_format)
+  add_arg("bold-format", bold_format)
+  add_arg("sintax-threshold", sintax_threshold)
+  add_arg("taxon-quality", taxon_quality)
+  add_arg("use-accession-id", use_accession_id)
+  add_arg("orf", orf)
+  add_arg("calculate-pairwise", calculate_pairwise)
+  
+  # Run the command
+  command <- paste(shQuote(python_bin), file.path("tombRaider", "tombRaider"), paste(args, collapse = " "))
+  system(command)
 }
